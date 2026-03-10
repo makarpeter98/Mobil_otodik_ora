@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     Button deleteButton;
 
     SharedPreferences sharedPreferences;
-
+//
     ActivityResultLauncher activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
