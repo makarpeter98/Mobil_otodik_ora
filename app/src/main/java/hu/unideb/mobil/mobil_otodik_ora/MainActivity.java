@@ -20,9 +20,9 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
+//
 public class MainActivity extends AppCompatActivity {
-    // teszt
+
     private static final String PREF_FILE = "shopping_list_pref";
     private static final String TEXTVIEW_DATA = "TEXTVIEW_DATA";
 
@@ -31,22 +31,6 @@ public class MainActivity extends AppCompatActivity {
     Button deleteButton;
 
     SharedPreferences sharedPreferences;
-//
-    ActivityResultLauncher activityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult reply) {
-                    Log.d("teszt", "activityResultLauncher");
-                    if(reply.getResultCode() == RESULT_OK)
-                    {
-                        if(itemsTextView.getText().toString().equals(getString(R.string.no_items)))
-                            itemsTextView.setText("");
-                        itemsTextView.append(reply.getData().getStringExtra("ITEM") + "\n");
-                    }
-                }
-            }
-    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,18 +41,43 @@ public class MainActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         itemsTextView = findViewById(R.id.itemsTextView);
 
-        if(savedInstanceState != null)
-        {
+
+        sharedPreferences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+
+
+        if (savedInstanceState != null) {
             itemsTextView.setText(savedInstanceState.getString(TEXTVIEW_DATA));
-        }
-        else {
+        } else {
+
             String savedText = sharedPreferences.getString(TEXTVIEW_DATA, getString(R.string.no_items));
+            itemsTextView.setText(savedText);
         }
 
-        addButton.setOnClickListener( v -> activityResultLauncher.launch(new Intent(this, ItemsActivity.class)) );
-        deleteButton.setOnClickListener(v -> {itemsTextView.setText(getString(R.string.no_items));});
+
+        addButton.setOnClickListener(v -> activityResultLauncher.launch(new Intent(this, ItemsActivity.class)));
+
+        deleteButton.setOnClickListener(v -> itemsTextView.setText(getString(R.string.no_items)));
     }
-    
+
+    // ActivityResultLauncher az ItemsActivity visszaadott adatának kezelésére
+    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult reply) {
+                    Log.d("MainActivity", "activityResultLauncher callback");
+                    if (reply.getResultCode() == RESULT_OK) {
+                        if (itemsTextView.getText().toString().equals(getString(R.string.no_items)))
+                            itemsTextView.setText("");
+                        String newItem = reply.getData().getStringExtra("ITEM");
+                        if (newItem != null) {
+                            itemsTextView.append(newItem + "\n");
+                        }
+                    }
+                }
+            }
+    );
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
