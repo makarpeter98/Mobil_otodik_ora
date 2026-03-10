@@ -22,7 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    //
+    // teszt
     private static final String PREF_FILE = "shopping_list_pref";
     private static final String TEXTVIEW_DATA = "TEXTVIEW_DATA";
 
