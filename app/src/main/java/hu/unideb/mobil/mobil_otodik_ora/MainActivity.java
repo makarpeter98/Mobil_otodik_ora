@@ -57,6 +57,14 @@ public class MainActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         itemsTextView = findViewById(R.id.itemsTextView);
 
+        if(savedInstanceState != null)
+        {
+            itemsTextView.setText(savedInstanceState.getString(TEXTVIEW_DATA));
+        }
+        else {
+            String savedText = sharedPreferences.getString(TEXTVIEW_DATA, getString(R.string.no_items));
+        }
+
         addButton.setOnClickListener( v -> activityResultLauncher.launch(new Intent(this, ItemsActivity.class)) );
         deleteButton.setOnClickListener(v -> {itemsTextView.setText(getString(R.string.no_items));});
     }
@@ -64,12 +72,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
+        outState.putString(TEXTVIEW_DATA, itemsTextView.getText().toString());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(TEXTVIEW_DATA, itemsTextView.getText().toString());
+        editor.apply();
     }
 }
